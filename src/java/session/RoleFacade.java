@@ -17,7 +17,7 @@ import secure.Role;
 @Stateless
 public class RoleFacade extends AbstractFacade<Role> {
 
-    @PersistenceContext(unitName = "KTVR17WebLibraryPU")
+    @PersistenceContext(unitName = "OpeMappsPU")
     private EntityManager em;
 
     @Override

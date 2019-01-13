@@ -5,17 +5,17 @@
  */
 package session;
 
-import entity.User;
+import entity.Team;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author Melnikov
+ * @author jvm
  */
 @Stateless
-public class UserFacade extends AbstractFacade<User> {
+public class TeamFacade extends AbstractFacade<Team> {
 
     @PersistenceContext(unitName = "OpeMappsPU")
     private EntityManager em;
@@ -25,18 +25,8 @@ public class UserFacade extends AbstractFacade<User> {
         return em;
     }
 
-    public UserFacade() {
-        super(User.class);
-    }
-
-    public User findByLogin(String login) {
-        try {
-            return (User) em.createQuery("SELECT u FROM User u WHERE u.login = :login")
-                .setParameter("login", login)
-                .getSingleResult();
-        } catch (Exception e) {
-            return null;
-        }
+    public TeamFacade() {
+        super(Team.class);
     }
     
 }

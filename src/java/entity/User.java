@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -21,45 +22,21 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String surname;
-    private String phone;
-    private String city;
     @Column(unique = true)
     private String login;
     private String password;
     private String salts;
+    @OneToOne
+    private Person person;
 
     public User() {
     }
 
-    public User(String name, String surname, String phone, String city, String login, String password) {
-        this.name = name;
-        this.surname = surname;
-        this.phone = phone;
-        this.city = city;
-        this.login = login;
-        this.password = password;
-    }
-
-    public User(String name, String surname, String phone, String city, String login, String password, String salts) {
-        this.name = name;
-        this.surname = surname;
-        this.phone = phone;
-        this.city = city;
+    public User(String login, String password, String salts, Person preson) {
         this.login = login;
         this.password = password;
         this.salts = salts;
-    }
-
-   
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
+        this.person = preson;
     }
 
     public Long getId() {
@@ -68,30 +45,6 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public String getLogin() {
@@ -106,23 +59,12 @@ public class User {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getSalts() {
-        return salts;
-    }
-
-    public void setSalts(String salts) {
-        this.salts = salts;
-    }
-
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 73 * hash + Objects.hashCode(this.login);
-        hash = 73 * hash + Objects.hashCode(this.password);
+        int hash = 5;
+        hash = 71 * hash + Objects.hashCode(this.login);
+        hash = 71 * hash + Objects.hashCode(this.password);
+        hash = 71 * hash + Objects.hashCode(this.salts);
         return hash;
     }
 
@@ -144,14 +86,38 @@ public class User {
         if (!Objects.equals(this.password, other.password)) {
             return false;
         }
+        if (!Objects.equals(this.salts, other.salts)) {
+            return false;
+        }
         return true;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getSalts() {
+        return salts;
+    }
+
+    public void setSalts(String salts) {
+        this.salts = salts;
+    }
+
+    public Person getPreson() {
+        return person;
+    }
+
+    public void setPreson(Person preson) {
+        this.person = preson;
     }
 
     @Override
     public String toString() {
-        return "Reader{" + "id=" + id + ", name=" + name + ", surname=" + surname + ", phone=" + phone + ", city=" + city + ", login=" + login + ", password=" + password + ", salts=" + salts + '}';
+        return "User{" + "id=" + id + ", login=" + login + ", password=" + password + ", salts=" + salts + ", person=" + person.getSurname() + '}';
     }
 
+    
    
     
 }

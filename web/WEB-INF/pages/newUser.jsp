@@ -18,10 +18,8 @@
             <input type="text" name="name"><br>
              Фамилия:<br>
             <input type="text" name="surname"><br>
-             Телефон:<br>
-            <input type="text" name="phone"><br>
-             Город<br>
-            <input type="text" name="city"><br>
+             Электронная почта (email):<br>
+            <input type="text" name="email"><br>
             <br>
              Логин<br>
             <input type="text" name="login"><br>

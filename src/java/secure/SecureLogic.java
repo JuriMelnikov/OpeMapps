@@ -30,17 +30,41 @@ public class SecureLogic {
             this.userRolesFacade = (UserRolesFacade) context.lookup("java:module/UserRolesFacade");
             this.roleFacade = (RoleFacade) context.lookup("java:module/RoleFacade");
         } catch (NamingException ex) {
-            Logger.getLogger(SecureLogic.class.getName()).log(Level.SEVERE, "Не удалось найти Бин", ex);
+            Logger.getLogger(SecureLogic.class.getName()).log(Level.SEVERE, "SecureLogic не удалось найти Бин", ex);
         }
     }
     
     public void addRoleToUser(UserRoles ur){
-        if(ur.getRole().getName().equals("ADMIN")){
+        
+        this.deleteRoleToUser(ur.getUser());
+        Role newRole;
+        UserRoles newUserRoles;
+        int n = RolesList.values().length;
+        if(ur.getRole().getName().equals(RolesList.ADMINISTRATOR.toString())){
             userRolesFacade.create(ur);
-            Role addNewRole = roleFacade.findRoleByName("USER");
-            UserRoles addedNewRoles = new UserRoles(ur.getUser(),addNewRole);
-            userRolesFacade.create(addedNewRoles);
-        }else if(ur.getRole().getName().equals("USER")){
+            newRole = roleFacade.findRoleByName(RolesList.JUHATAJA.toString());
+            newUserRoles = new UserRoles(ur.getUser(),newRole);
+            userRolesFacade.create(newUserRoles);
+            newRole = roleFacade.findRoleByName(RolesList.RUHMAJUHATAJA.toString());
+            newUserRoles = new UserRoles(ur.getUser(),newRole);
+            userRolesFacade.create(newUserRoles);
+            newRole = roleFacade.findRoleByName(RolesList.OPILANE.toString());
+            newUserRoles = new UserRoles(ur.getUser(),newRole);
+            userRolesFacade.create(newUserRoles);
+        }else if(ur.getRole().getName().equals(RolesList.JUHATAJA.toString())){
+            userRolesFacade.create(ur);
+            newRole = roleFacade.findRoleByName(RolesList.RUHMAJUHATAJA.toString());
+            newUserRoles = new UserRoles(ur.getUser(),newRole);
+            userRolesFacade.create(newUserRoles);
+            newRole = roleFacade.findRoleByName(RolesList.OPILANE.toString());
+            newUserRoles = new UserRoles(ur.getUser(),newRole);
+            userRolesFacade.create(newUserRoles);
+        }else if(ur.getRole().getName().equals(RolesList.RUHMAJUHATAJA.toString())){
+            userRolesFacade.create(ur);
+            newRole = roleFacade.findRoleByName(RolesList.OPILANE.toString());
+            newUserRoles = new UserRoles(ur.getUser(),newRole);
+            userRolesFacade.create(newUserRoles);
+        }else if(ur.getRole().getName().equals(RolesList.OPILANE.toString())){
             userRolesFacade.create(ur);
         }
         
@@ -70,12 +94,22 @@ public class SecureLogic {
         List<UserRoles> listUserRoles = userRolesFacade.findByUser(regUser);
         int n = listUserRoles.size();
         for(int i = 0; i<n; i++){
-            if("ADMIN".equals(listUserRoles.get(i).getRole().getName())){
+            if(RolesList.ADMINISTRATOR.toString().equals(listUserRoles.get(i).getRole().getName())){
                 return listUserRoles.get(i).getRole().getName();
             }
         }
         for(int i = 0; i<n; i++){
-            if("USER".equals(listUserRoles.get(i).getRole().getName())){
+            if(RolesList.JUHATAJA.toString().equals(listUserRoles.get(i).getRole().getName())){
+                return listUserRoles.get(i).getRole().getName();
+            }
+        }
+        for(int i = 0; i<n; i++){
+            if(RolesList.RUHMAJUHATAJA.toString().equals(listUserRoles.get(i).getRole().getName())){
+                return listUserRoles.get(i).getRole().getName();
+            }
+        }
+        for(int i = 0; i<n; i++){
+            if(RolesList.OPILANE.toString().equals(listUserRoles.get(i).getRole().getName())){
                 return listUserRoles.get(i).getRole().getName();
             }
         }

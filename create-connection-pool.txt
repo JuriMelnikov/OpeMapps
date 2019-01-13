@@ -1,3 +1,3 @@
-create-jdbc-connection-pool --datasourceclassname com.mysql.jdbc.jdbc2.optional.MysqlDataSource --restype javax.sql.DataSource --property portNumber=3306:password=ktvr17weblibrary:user=ktvr17weblibrary:serverName=localhost:databaseName=ktvr17weblibrary:useUnicode=true:characterEncoding=utf8 ktvr17weblibraryPool
+create-jdbc-connection-pool --datasourceclassname com.mysql.jdbc.jdbc2.optional.MysqlDataSource --restype javax.sql.DataSource --property portNumber=3306:password=opemapps:user=opemapps:serverName=localhost:databaseName=opemapps:useUnicode=true:characterEncoding=utf8 opemappsPool
 
-create-jdbc-resource --connectionpoolid ktvr17weblibraryPool jdbc/ktvr17weblibraryDS
+create-jdbc-resource --connectionpoolid opemappsPool jdbc/opemappsDS

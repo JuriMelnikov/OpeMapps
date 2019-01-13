@@ -15,8 +15,8 @@
     <body>
         <h1>Список читателей</h1>
         <ul>
-            <c:forEach var="reader" items="${listReader}">
-                <li>${reader.name} ${reader.surname}</li>
+            <c:forEach var="user" items="${listUser}">
+                <li>${user.name} ${user.surname}</li>
             </c:forEach>
         </ul>
     </body>

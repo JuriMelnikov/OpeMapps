@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package secure;
+package servlets;
 
+import entity.Person;
 import entity.User;
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,8 +18,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import session.UserFacade;
+import secure.Role;
+import secure.RolesList;
+import secure.SecureLogic;
+import secure.UserRoles;
+import session.PersonFacade;
 import session.RoleFacade;
+import session.UserFacade;
 import session.UserRolesFacade;
 import util.EncriptPass;
 import util.PageReturner;
@@ -34,34 +40,32 @@ import util.PageReturner;
     "/showUserRoles",
     "/changeUserRole"
 })
-public class Secure extends HttpServlet {
+public class SecureController extends HttpServlet {
    
     @EJB RoleFacade roleFacade;
     @EJB UserFacade userFacade;
     @EJB UserRolesFacade userRolesFacade;
+    @EJB PersonFacade personFacade;
 
     @Override
     public void init() throws ServletException {
-        List<User> listReader = userFacade.findAll();
-        if(listReader.isEmpty()){
+        List<User> listUsers = userFacade.findAll();
+        if(listUsers.isEmpty()){
             EncriptPass ep = new EncriptPass();
             String salts = ep.createSalts();
             String encriptPass = ep.setEncriptPass("admin", salts);
-            User user = new User("Сидор", "Сидоров", 
-                 "454545454", "К-Ярве", "admin", encriptPass, salts);
+            Person person = new Person("Juri", "Melnikov", "juri.melnikov@gmail.com");
+            personFacade.create(person);
+            User user = new User("admin", encriptPass, salts, person);
             userFacade.create(user);
             Role role = new Role();
-            role.setName("ADMIN");
+            role.setName(RolesList.ADMINISTRATOR.toString());
             roleFacade.create(role);
             UserRoles ur = new UserRoles();
             ur.setUser(user);
             ur.setRole(role);
-            userRolesFacade.create(ur);
-            role.setName("USER");
-            roleFacade.create(role);
-            ur.setUser(user);
-            ur.setRole(role);
-            userRolesFacade.create(ur);
+            SecureLogic sl = new SecureLogic();
+            sl.addRoleToUser(ur);
         }
     }
     
@@ -110,7 +114,7 @@ public class Secure extends HttpServlet {
             if(encriptPass.equals(regUser.getPassword())){
                 session = request.getSession(true);
                 session.setAttribute("regUser", regUser);
-                request.setAttribute("info", "Привет "+regUser.getName()
+                request.setAttribute("info", "Привет "+regUser.getPreson().getName()
                         +"! Вы вошли в систему.");
                 request.getRequestDispatcher(PageReturner.getPage("welcome"))
                         .forward(request, response);
@@ -132,7 +136,7 @@ public class Secure extends HttpServlet {
                     .forward(request, response);
             break;
         case "/showUserRoles":
-            if(!sl.isRole(regUser, "ADMIN")){
+            if(!sl.isRole(regUser, RolesList.ADMINISTRATOR.toString())){
                 request.setAttribute("info", "У вас нет прав доступа к ресурсу");
                 request.getRequestDispatcher(PageReturner.getPage("showLogin"))
                         .forward(request, response);
@@ -152,7 +156,7 @@ public class Secure extends HttpServlet {
                     .forward(request, response);
             break;
         case "/changeUserRole":
-            if(!sl.isRole(regUser, "ADMIN")){
+            if(!sl.isRole(regUser, RolesList.ADMINISTRATOR.toString())){
                 request.setAttribute("info", "У вас нет прав доступа к ресурсу");
                 request.getRequestDispatcher(PageReturner.getPage("showLogin"))
                     .forward(request, response);
