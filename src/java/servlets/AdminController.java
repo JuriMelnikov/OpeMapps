@@ -74,7 +74,7 @@ public class AdminController extends HttpServlet {
             String password2 = request.getParameter("password2");
             if(!password1.equals(password2)){
               request.setAttribute("info", "Неправильно введен логин или пароль");  
-              request.getRequestDispatcher(PageReturner.getPage("welcome"))
+              request.getRequestDispatcher(PageReturner.getPage("listUsers"))
                       .forward(request, response);
               break;
             }

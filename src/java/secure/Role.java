@@ -23,7 +23,8 @@ public class Role {
     private Long id;
     @Column(unique = true)
     private String name;
-
+    private int layer;
+    
     public Role() {
     }
 
@@ -74,7 +75,15 @@ public class Role {
 
     @Override
     public String toString() {
-        return "Role{" + "id=" + id + ", name=" + name + '}';
+        return "Role{" + "id=" + id + ", name=" + name + ", layer=" + layer + '}';
+    }
+
+    public int getLayer() {
+        return layer;
+    }
+
+    public void setLayer(int layer) {
+        this.layer = layer;
     }
     
     

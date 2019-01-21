@@ -27,7 +27,7 @@
                         <select name="user">
                             <option value="" disabled selected hidden></option>
                             <c:forEach var="entry" items="${mapUsers}">
-                                <option value="${entry.key.id}">${entry.key.login}, роль: ${entry.value} </option>
+                                <option value="${entry.key.id}">${entry.key.login}, роль: ${entry.value.name} </option>
                             </c:forEach>
                         </select>
                     </td>
@@ -41,6 +41,44 @@
                     </td>
                     <td><input type="submit" name="setButton" value="Назначить"></td>
                     <td><input type="submit" name="deleteButton" value="Удалить"></td>
+                </tr>
+                <tr>
+                    <td col="4">
+                        Добавить роль
+                    </td>
+                    
+                </tr>
+                <tr>
+                    <td>Название</td>
+                    <td>Уровень</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" name="roleName">
+                    </td>
+                    <td><input type="text" name="layer"></td>
+                    <td></td>
+                    <td><input type="submit" name="addRoleButton" value="Добавить роль"</td>
+                </tr>
+                <tr>
+                    <td col="4">
+                        Удалить роль
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select name="deleteRoleId">
+                            <option value="" disabled selected hidden></option>
+                            <c:forEach var="deleteRole" items="${listRoles}">
+                                <option value="${deleteRole.id}">${deleteRole.name}</option>
+                            </c:forEach>
+                        </select>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td><input type="submit" name="deleteRoleButton" value="Удалить роль"</td>
                 </tr>
             </table>
         </form>
