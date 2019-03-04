@@ -32,11 +32,11 @@ public class User {
     public User() {
     }
 
-    public User(String login, String password, String salts, Person preson) {
+    public User(String login, String password, String salts, Person person) {
         this.login = login;
         this.password = password;
         this.salts = salts;
-        this.person = preson;
+        this.person = person;
     }
 
     public Long getId() {
@@ -104,12 +104,12 @@ public class User {
         this.salts = salts;
     }
 
-    public Person getPreson() {
+    public Person getPerson() {
         return person;
     }
 
-    public void setPreson(Person preson) {
-        this.person = preson;
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
     @Override

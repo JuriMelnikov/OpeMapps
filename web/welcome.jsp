@@ -17,17 +17,17 @@
         <br>
         <a href="showLogin">Войти в систему</a><br>
         <a href="logout">Выйти из системы</a><br>
-        <a href="newUser">добавить пользователя</a><br>
-        
+        <a href="showRegistration">Зарегистрироваться</a><br>
+        <a href="showUpload">добавить изображение</a><br>
+        <a href="showUserFiles">фалы пользователя</a><br>
         
         <br>
         <p>Для администратора:</p>
         <a href="showListUsers">Список пользователей</a><br>
-        <a href="showUserRoles">Назначение ролей пользователям</a>
+        <a href="showChangeRole">Назначение ролей пользователям</a>
         <br><br>
         Добавлен пользователь:<br>
         Имя: ${user.name}<br>
         Фамилия: ${user.surname}
-        
     </body>
 </html>

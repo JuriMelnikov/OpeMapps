@@ -3,19 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package servlets;
+package files;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 import entity.User;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -25,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
+import util.FileResizer;
+import util.ImageFolder;
 import util.PageReturner;
 
 /**
@@ -39,8 +40,7 @@ public class FileUploadServlet extends HttpServlet {
     
     @Override
     public void init() throws ServletException {
-        ResourceBundle pageName = ResourceBundle.getBundle("properties.pathToImageFolder");
-        this.imageFolder=pageName.getString("pathToImageFolder");
+        
     }
 
     /**
@@ -55,98 +55,54 @@ public class FileUploadServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        this.imageFolder  = ImageFolder.getImageFolder("pathToImageFolder");
         // Укажите в в поле imageFolder путь к каталогу, где будут храниться загруженные файлы (изображения)
         // Не забудьте дать права этой директории на запись и чтение 
         HttpSession session = request.getSession(false);
         if(session == null){
             request.setAttribute("info", "Необходима авторизация");
             request.getRequestDispatcher(PageReturner.getPage("showLogin")).forward(request, response);
+            return;
         }
         User regUser = (User) session.getAttribute("regUser");
         if(regUser == null){
             request.setAttribute("info", "Необходима авторизация");
             request.getRequestDispatcher(PageReturner.getPage("showLogin")).forward(request, response);
+            return;
         }
-        String path = this.imageFolder; // инициируется в методе init
-        String directoryName = path.concat(regUser.getId().toString());
-        //String fileName = id + getTimeStamp() + ".txt";
-
-        
+        String pathDir = this.imageFolder+request.getContextPath()+File.separator+regUser.getId().toString();
+        new File(pathDir).mkdirs();
         List<Part> fileParts = request.getParts().stream().filter(part->"file".equals(part.getName()))
                 .collect(Collectors.toList());
         for(Part filePart : fileParts){
-            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-            File directory = new File(directoryName);
-            if (! directory.exists()){
-                directory.mkdir();
-                // If you require it to make the entire directory path including parents,
-                // use directory.mkdirs(); here instead.
+//            //Path fileName = Paths.get(filePart.getSubmittedFileName()).getFileName();
+            String path = pathDir+File.separatorChar+getFileName(filePart);
+//            File targetFile = new File(path);
+            File tempFile = new File("/tmp/"+getFileName(filePart));
+            File parent = tempFile.getParentFile();
+            if(!parent.exists() 
+                    && 
+                    !parent.mkdirs()){
+                throw new IllegalStateException("Couldn't create dir: " + parent);
             }
-            File nameFile = new File(directory.getName().concat(fileName));
             try(InputStream fileContent = filePart.getInputStream()){
-                Files.copy(fileContent, directory.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(fileContent, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
-            
+            writeToFile(FileResizer.resize(tempFile), path);
+            tempFile.delete();
         }
-        
-//        final Part filePart = request.getPart("file");
-//        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-//        
-        //final String fileName = (String) getFileName(filePart);
-//        File file = new File(directory.getPath()+File.separator+fileName);
-//        
-//        FileWriter fw = new FileWriter(file.getAbsoluteFile());
-//        BufferedWriter bw = new BufferedWriter(fw);
-//        FileReader fr = new FileReader(file);
-//        bw.write(fr.toString());
-//        bw.close();
-            
-        
-        
-        
-//        OutputStream out = null;
-//        InputStream filecontent = null;
-//        
-//        try {
-//            out = new FileOutputStream(new File(this.imageFolder + File.separator
-//                    + fileName));
-//            filecontent = filePart.getInputStream();
-//
-//            int read = 0;
-//            final byte[] bytes = new byte[1024];
-//
-//            while ((read = filecontent.read(bytes)) != -1) {
-//                out.write(bytes, 0, read);
-//            }
-//           
-//            LOGGER.log(Level.INFO, "Файл {0} начал загружаться в {1}", 
-//                    new Object[]{fileName,this.imageFolder});
-//        } catch (FileNotFoundException fne) {
-//            LOGGER.log(Level.SEVERE, "Проблемы загрузки файла. Error: {0}", 
-//                    new Object[]{fne.getMessage()});
-//        } finally {
-//            if (out != null) {
-//                out.close();
-//            }
-//            if (filecontent != null) {
-//                filecontent.close();
-//            }
-//            
-//        }
-//        if(!"".equals(fileName)){
-//            request.setAttribute("linkImg", this.imageFolder+File.separator+fileName);
-//            request.setAttribute("info", "Файл загружен.<br>Ссылка для копирования: "
-//                    +this.imageFolder+File.separator+fileName);
-//        }else{
-//            request.setAttribute("info", "Не выбран файл для загрузки!");
-//  
-//        }
-        request.getRequestDispatcher("/newarticle").forward(request, response);
+        List<File> filesInFolder = Files.walk(Paths.get(pathDir))
+                                .filter(Files::isRegularFile)
+                                .map(Path::toFile)
+                                .collect(Collectors.toList());
+        request.setAttribute("filesInFolder", filesInFolder);
+        request.getRequestDispatcher("/showUpload.jsp").forward(request, response);
     }
+    
     
     private String getFileName(final Part part) {
         final String partHeader = part.getHeader("content-disposition");
-        LOGGER.log(Level.INFO, "Part Header = {0}", partHeader);
+        
         for (String content : part.getHeader("content-disposition").split(";")) {
             if (content.trim().startsWith("filename")) {
                 return content.substring(
@@ -154,6 +110,11 @@ public class FileUploadServlet extends HttpServlet {
             }
         }
         return null;
+    }
+    public void writeToFile(byte[] data, String fileName) throws IOException{
+        try (FileOutputStream out = new FileOutputStream(fileName)) {
+            out.write(data);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

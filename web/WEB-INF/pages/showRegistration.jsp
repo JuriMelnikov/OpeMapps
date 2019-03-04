@@ -13,7 +13,7 @@
     </head>
     <body>
         <h1>Добавляем в библиотеку нового читателя</h1>
-        <form action="addUser" method="POST" name="form1" id="_form1">
+        <form action="registration" method="POST" name="form1" id="_form1">
              Имя:<br>
             <input type="text" name="name"><br>
              Фамилия:<br>

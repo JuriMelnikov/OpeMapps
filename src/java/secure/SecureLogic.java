@@ -6,6 +6,7 @@
 package secure;
 
 import entity.User;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,86 +35,103 @@ public class SecureLogic {
         }
     }
     
-    public void addRoleToUser(UserRoles ur){
-        
-        this.deleteRoleToUser(ur.getUser());
+    public void setRole(Role role, User user){
+        this.removeAllRoles(user);
         Role newRole;
-        UserRoles newUserRoles;
-        int n = RolesList.values().length;
-        if(ur.getRole().getName().equals(RolesList.ADMINISTRATOR.toString())){
-            userRolesFacade.create(ur);
-            newRole = roleFacade.findRoleByName(RolesList.JUHATAJA.toString());
-            newUserRoles = new UserRoles(ur.getUser(),newRole);
-            userRolesFacade.create(newUserRoles);
-            newRole = roleFacade.findRoleByName(RolesList.RUHMAJUHATAJA.toString());
-            newUserRoles = new UserRoles(ur.getUser(),newRole);
-            userRolesFacade.create(newUserRoles);
-            newRole = roleFacade.findRoleByName(RolesList.OPILANE.toString());
-            newUserRoles = new UserRoles(ur.getUser(),newRole);
-            userRolesFacade.create(newUserRoles);
-        }else if(ur.getRole().getName().equals(RolesList.JUHATAJA.toString())){
-            userRolesFacade.create(ur);
-            newRole = roleFacade.findRoleByName(RolesList.RUHMAJUHATAJA.toString());
-            newUserRoles = new UserRoles(ur.getUser(),newRole);
-            userRolesFacade.create(newUserRoles);
-            newRole = roleFacade.findRoleByName(RolesList.OPILANE.toString());
-            newUserRoles = new UserRoles(ur.getUser(),newRole);
-            userRolesFacade.create(newUserRoles);
-        }else if(ur.getRole().getName().equals(RolesList.RUHMAJUHATAJA.toString())){
-            userRolesFacade.create(ur);
-            newRole = roleFacade.findRoleByName(RolesList.OPILANE.toString());
-            newUserRoles = new UserRoles(ur.getUser(),newRole);
-            userRolesFacade.create(newUserRoles);
-        }else if(ur.getRole().getName().equals(RolesList.OPILANE.toString())){
-            userRolesFacade.create(ur);
-        }
+        UserRoles ur=new UserRoles();
+        ur.setUser(user);
+        if(null != role.getName())
+            switch (role.getName()) {
+                case "ADMINISTRATOR":
+                    newRole = this.getRole(RolesList.ADMINISTRATOR.toString());
+                    ur.setRole(newRole);
+                    userRolesFacade.create(ur);
+                    newRole = this.getRole(RolesList.JUHATAJA.toString());
+                    ur.setRole(newRole);
+                    userRolesFacade.create(ur);
+                    newRole = this.getRole(RolesList.RUHMAJUHATAJA.toString());
+                    ur.setRole(newRole);
+                    userRolesFacade.create(ur);
+                    newRole = this.getRole(RolesList.OPILANE.toString());
+                    ur.setRole(newRole);
+                    userRolesFacade.create(ur);
+                    break;
+                case "JUHATAJA":
+                    newRole = this.getRole(RolesList.JUHATAJA.toString());
+                    ur.setRole(newRole);
+                    userRolesFacade.create(ur);
+                    newRole = this.getRole(RolesList.RUHMAJUHATAJA.toString());
+                    ur.setRole(newRole);
+                    userRolesFacade.create(ur);
+                    newRole = this.getRole(RolesList.OPILANE.toString());
+                    ur.setRole(newRole);
+                    userRolesFacade.create(ur);
+                    break;
+                case "RUHMAJUHATAJA":
+                    newRole = this.getRole(RolesList.RUHMAJUHATAJA.toString());
+                    ur.setRole(newRole);
+                    userRolesFacade.create(ur);
+                    newRole = this.getRole(RolesList.OPILANE.toString());
+                    ur.setRole(newRole);
+                    userRolesFacade.create(ur);
+                    break;
+                case "OPILANE":
+                    newRole = this.getRole(RolesList.OPILANE.toString());
+                    ur.setRole(newRole);
+                    userRolesFacade.create(ur);
+                    break;
+            }
+        
         
     }
-    public void deleteRoleToUser(User user){
-        List<UserRoles> listUserRoles = userRolesFacade.findByUser(user);
+    public void removeAllRoles(User user){
+        List<UserRoles> listUserRoles = userRolesFacade.findUserRoles(user);
         int n = listUserRoles.size();
         for(int i=0; i<n; i++){
             userRolesFacade.remove(listUserRoles.get(i));
         }
     }
 
-    public boolean isRole(User user, String roleName){
-        if(user == null) return false;
-        List<UserRoles> listUserRoles = userRolesFacade.findByUser(user);
-        Role role = roleFacade.findRoleByName(roleName);
-        int n = listUserRoles.size();
-        for(int i = 0; i < n; i++){
-            if(listUserRoles.get(i).getRole().equals(role)){
-                return true;
-            }
+    public boolean isRole(String roleName,User user){
+        boolean res=false;
+        List<UserRoles> listUserRoles = userRolesFacade.findUserRoles(user);
+        List<String> listRolesByUser = new ArrayList<>();
+        for(UserRoles ur : listUserRoles){
+            listRolesByUser.add(ur.getRole().getName());
         }
-        return false;
+        return listRolesByUser.contains(roleName);
     }
     
-    public String getRole(User regUser) {
-        List<UserRoles> listUserRoles = userRolesFacade.findByUser(regUser);
-        int n = listUserRoles.size();
-        for(int i = 0; i<n; i++){
-            if(RolesList.ADMINISTRATOR.toString().equals(listUserRoles.get(i).getRole().getName())){
-                return listUserRoles.get(i).getRole().getName();
-            }
-        }
-        for(int i = 0; i<n; i++){
-            if(RolesList.JUHATAJA.toString().equals(listUserRoles.get(i).getRole().getName())){
-                return listUserRoles.get(i).getRole().getName();
-            }
-        }
-        for(int i = 0; i<n; i++){
-            if(RolesList.RUHMAJUHATAJA.toString().equals(listUserRoles.get(i).getRole().getName())){
-                return listUserRoles.get(i).getRole().getName();
-            }
-        }
-        for(int i = 0; i<n; i++){
-            if(RolesList.OPILANE.toString().equals(listUserRoles.get(i).getRole().getName())){
-                return listUserRoles.get(i).getRole().getName();
+    public  Role getRole(String roleName){
+        List<Role> roles = roleFacade.findAll();
+        for(Role role: roles){
+            if(roleName.equals(role.getName())){
+                return role;
             }
         }
         return null;
+    }
+    
+    public Role getRole(User user){
+        List<UserRoles> listUserRoles = userRolesFacade.findUserRoles(user);
+        List<String> nameRoles = new ArrayList<>();
+        for(UserRoles ur : listUserRoles){
+            nameRoles.add(ur.getRole().getName());
+        }
+        if(nameRoles.contains(RolesList.ADMINISTRATOR.toString())){
+            return getRole(RolesList.ADMINISTRATOR.toString());
+        }
+        if(nameRoles.contains(RolesList.JUHATAJA.toString())){
+            return getRole(RolesList.JUHATAJA.toString());
+        }
+        if(nameRoles.contains(RolesList.RUHMAJUHATAJA.toString())){
+            return getRole(RolesList.RUHMAJUHATAJA.toString());
+        }
+        if(nameRoles.contains(RolesList.OPILANE.toString())){
+            return getRole(RolesList.OPILANE.toString());
+        }else{
+            return null;
+        }
     }
     
 }

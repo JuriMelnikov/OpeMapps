@@ -31,7 +31,7 @@ public class UserRolesFacade extends AbstractFacade<UserRoles> {
         super(UserRoles.class);
     }
 
-    public List<UserRoles> findByUser(User user) {
+    public List<UserRoles> findUserRoles(User user) {
         return em.createQuery("SELECT ur FROM UserRoles ur WHERE ur.user = :user")
                 .setParameter("user", user)
                 .getResultList();

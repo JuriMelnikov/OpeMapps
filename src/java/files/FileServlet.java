@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package servlets;
+package files;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

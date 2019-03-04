@@ -22,14 +22,18 @@ public class ResourceLink {
     private Long id;
     private String name;
     private String link;
+    private Team team;
 
     public ResourceLink() {
     }
 
-    public ResourceLink(String name, String link) {
+    public ResourceLink(String name, String link, Team team) {
         this.name = name;
         this.link = link;
+        this.team = team;
     }
+
+
 
     public Long getId() {
         return id;
@@ -91,6 +95,14 @@ public class ResourceLink {
     @Override
     public String toString() {
         return "ResourceLink{" + "id=" + id + ", name=" + name + ", link=" + link + '}';
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
     
     

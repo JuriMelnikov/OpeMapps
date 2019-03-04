@@ -28,12 +28,15 @@ public class Team {
     
     public Team() {
     }
-    
+
     public Team(String name, int year, int duration) {
         this.name = name;
         this.year = year;
         this.duration = duration;
     }
+    
+                
+
 
     public Long getId() {
         return id;

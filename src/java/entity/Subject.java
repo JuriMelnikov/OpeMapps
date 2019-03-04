@@ -5,28 +5,25 @@
  */
 package entity;
 
-import java.util.List;
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-//import javax.persistence.Id;
 
 /**
  *
  * @author jvm
  */
 @Entity
-public class Article {
+public class Subject implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private User user;
-    private Subject subject;
-    private List<ResourceLink> links;
-
-    public Article() {
-    }
-
+    private String name;
+    private Team team;
+    
+    
     
 }
