@@ -19,12 +19,13 @@
         <a href="logout">Выйти из системы</a><br>
         <a href="showRegistration">Зарегистрироваться</a><br>
         <a href="showUpload">добавить изображение</a><br>
-        <a href="showUserFiles">фалы пользователя</a><br>
+        <a href="showUserFiles">файлы пользователя</a><br>
         
         <br>
         <p>Для администратора:</p>
         <a href="showListUsers">Список пользователей</a><br>
-        <a href="showChangeRole">Назначение ролей пользователям</a>
+        <a href="showChangeRole">Назначение ролей пользователям</a><br>
+        <a href="showTitleCart">Карта</a><br>
         <br><br>
         Добавлен пользователь:<br>
         Имя: ${user.name}<br>

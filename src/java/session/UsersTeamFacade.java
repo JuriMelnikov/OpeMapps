@@ -5,7 +5,8 @@
  */
 package session;
 
-import entity.ResourceLink;
+import entity.User;
+import entity.UsersTeam;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,7 +16,7 @@ import javax.persistence.PersistenceContext;
  * @author jvm
  */
 @Stateless
-public class ResourceLinkFacade extends AbstractFacade<ResourceLink> {
+public class UsersTeamFacade extends AbstractFacade<UsersTeam> {
 
     @PersistenceContext(unitName = "OpeMappsPU")
     private EntityManager em;
@@ -25,8 +26,18 @@ public class ResourceLinkFacade extends AbstractFacade<ResourceLink> {
         return em;
     }
 
-    public ResourceLinkFacade() {
-        super(ResourceLink.class);
+    public UsersTeamFacade() {
+        super(UsersTeam.class);
+    }
+
+    public UsersTeam findByUser(User user) {
+        try {
+            return  (UsersTeam) em.createQuery("SELECT ut FROM UsersTeam ut WHERE ut.user = :user")
+                    .setParameter("user", user)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
     
 }

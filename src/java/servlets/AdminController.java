@@ -6,7 +6,11 @@
 package servlets;
 
 
+import entity.Subject;
+import entity.Team;
 import entity.User;
+import entity.UsersTeam;
+import entity.Work;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -21,9 +25,13 @@ import javax.servlet.http.HttpSession;
 import secure.Role;
 import secure.RolesList;
 import secure.SecureLogic;
+import session.ArticleFacade;
 import session.PersonFacade;
 import session.RoleFacade;
+import session.SubjectFacade;
 import session.UserFacade;
+import session.UsersTeamFacade;
+import session.WorkFacade;
 import util.PageReturner;
 
 /**
@@ -37,6 +45,8 @@ import util.PageReturner;
     "/showChangeRole",
     "/changeUserRole",
     "/changeRole",
+    "/showTitleCart",
+    "/work"
     
     
 })
@@ -45,7 +55,13 @@ public class AdminController extends HttpServlet {
 
 @EJB PersonFacade personFacade;
 @EJB UserFacade userFacade;
+@EJB UsersTeamFacade usersTeamFacade;
 @EJB RoleFacade roleFacade;
+@EJB SubjectFacade subjectFacade;
+@EJB ArticleFacade articleFacade;
+@EJB WorkFacade workFacade;
+
+        
 
     public AdminController() {
     }
@@ -121,6 +137,34 @@ public class AdminController extends HttpServlet {
                 request.getRequestDispatcher(PageReturner.getPage("listUsers"))
                         .forward(request, response);
                 break;
+                
+            case "/showTitleCart":
+                Map<Work,String>mapWorksInSubject = new HashMap<>();
+                
+                UsersTeam ut = usersTeamFacade.findByUser(regUser);
+                Team team = ut.getTeam();
+                request.setAttribute("team", team);
+                request.setAttribute("peaple", regUser.getPerson());
+                List<Subject> listSubjects = subjectFacade.findAll();
+                request.setAttribute("listSubjects", listSubjects);
+                String subjectId = request.getParameter("subjectId");
+                if(subjectId != null){
+                    Subject subject = subjectFacade.find(new Long(subjectId));
+                    List<Work> listWork = workFacade.findBySubject(subject,team);
+                    for(Work work : listWork){
+                        mapWorksInSubject.put(work, subjectId);
+                    }
+                    request.setAttribute("mapWorksInSubject", mapWorksInSubject);
+                    String workId = request.getParameter("workId");
+                    if(workId != null){
+                        Work work = workFacade.find(new Long(workId));
+                        request.setAttribute("work", work);
+                    }
+                }
+                request.getRequestDispatcher(PageReturner.getPage("titleCart"))
+                        .forward(request, response);
+                break;
+           
         }
         
     
